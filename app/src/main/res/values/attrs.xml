@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="custume_ripple_imageview">
+        <attr name="show_spacing_time" format="integer"></attr>
+        <attr name="imageViewWidth" format="dimension"></attr>
+        <attr name="imageViewHeight" format="dimension"></attr>
+    </declare-styleable>
+
+    <declare-styleable name="my_ripple_view">
+        <attr name="view_time" format="integer"/>
+        <attr name="view_width" format="dimension"/>
+        <attr name="view_height" format="dimension"/>
+        <attr name="view_radius" format="dimension"/>
+        <attr name="view_color" format="color"/>
+        <attr name="view_speed" format="integer"/>
+    </declare-styleable>
+
+</resources>

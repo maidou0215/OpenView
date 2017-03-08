@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp">
+
+        <LinearLayout
+            android:id="@+id/ll_moban"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/boman_selector_essay"
+            android:alpha="0.8"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/rl_text"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:id="@+id/ll_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/tv_essay_title"
+                        android:textColor="@color/colorWhite"
+                        android:textStyle="bold"
+                        android:maxLines="1"
+                        android:textSize="14dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:layout_marginTop="10dp"
+                        android:id="@+id/tv_essay_summary"
+                        android:textColor="@color/colorLightGray"
+                        android:textStyle="bold"
+                        android:maxLines="2"
+                        android:textSize="15dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_gravity="center_vertical"
+                    android:id="@+id/iv_essay_img"
+                    android:layout_margin="15dp"
+                    android:scaleType="centerCrop"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"/>
+            </LinearLayout>
+
+            <View
+                android:layout_marginStart="14dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorGray"
+                />
+        </LinearLayout>
+    </FrameLayout>
+
+</LinearLayout>

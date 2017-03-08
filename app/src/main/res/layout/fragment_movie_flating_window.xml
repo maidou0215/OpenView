@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <View
+        android:id="@+id/bg_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <LinearLayout
+        android:id="@+id/main_ll_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/floating_window_fragment_bg"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_floating_window_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:gravity="center_horizontal"
+            android:text="标题"
+            android:textColor="@color/colorWhite"
+            android:textSize="20dp"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="20dp"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/iv_floating_window_pic"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/pic_movie"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/abc_list_selector_disabled_holo_dark"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/tv_floating_window_time"
+                    style="@style/style_floating_window_text"
+                    android:text="时间"/>
+
+                <TextView
+                    android:id="@+id/tv_floating_window_type"
+                    style="@style/style_floating_window_text"
+                    android:text="类型"/>
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/tv_floating_window_area"
+                    style="@style/style_floating_window_text"
+                    android:text="地区"/>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/item_base_ll"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.AppCompatRatingBar
+                android:id="@+id/rb_rating_bar"
+                android:isIndicator="true"
+                android:layout_marginStart="45dp"
+                android:layout_width="wrap_content"
+                style="@style/MovieRatingBar"
+                android:layout_height="23dp"
+                android:numStars="5"
+                />
+
+            <TextView
+                android:id="@+id/tv_rating_number"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="9.9"
+                android:textColor="@color/colorWhite"
+                android:textSize="20sp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btn_movie_detail"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/round_solid_btn"
+        android:gravity="center_horizontal"
+        android:text="Detail"
+        android:textColor="@color/colorWhite"
+        android:textSize="18dp"
+        android:textStyle="bold"/>
+</RelativeLayout>

@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">OpenView</string>
+    <string name="summary">概要</string>
+    <string name="trailers">演员表</string>
+    <string name="reviews">评论</string>
+    <string name="movie_details">电影详情</string>
+    <string name="essay_string">Essay</string>
+    <string name="essay_details">文章精选</string>
+    <string name="Video">Video</string>
+    <string name="in_theaters">正在热映</string>
+    <string name="coming_soon">即将上映</string>
+    <string name="new_movies">最新电影</string>
+    <string name="weekly">最佳排行</string>
+    <string name="ScrollViewBehavior" translatable="false">com.nov.openview.utils.ScrollViewBehavior</string>
+
+</resources>
+

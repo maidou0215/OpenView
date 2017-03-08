@@ -1,0 +1,39 @@
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                   android:id="@+id/toolbar"
+                                   app:contentInsetLeft="0dp"
+                                   app:contentInsetStart="0dp"
+                                   app:layout_collapseMode="pin"
+                                   android:layout_width="match_parent"
+                                   android:layout_height="?attr/actionBarSize"
+                                   android:minHeight="?attr/actionBarSize">
+
+        <com.nov.openview.utils.CustomTextView
+            android:paddingStart="8dp"
+            android:gravity="center_vertical"
+            android:id="@+id/main_toolbar_tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/colorLightGray"
+            android:textSize="20dp"/>
+
+        <com.nov.openview.utils.CustomTextView
+            android:gravity="center_vertical"
+            android:id="@+id/tv_toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/colorWhite"
+            android:textSize="30sp"
+            android:layout_gravity="center_horizontal"
+            android:textStyle="bold"/>
+
+        <ImageButton
+            android:id="@+id/main_toolbar_iv_right"
+            android:padding="4dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:scaleType="centerCrop"
+            android:layout_gravity="end|center_vertical"
+            android:background="@null"/>
+
+</android.support.v7.widget.Toolbar>
