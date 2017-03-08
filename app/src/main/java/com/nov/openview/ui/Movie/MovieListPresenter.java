@@ -26,6 +26,7 @@ public class MovieListPresenter extends MovieListContract.Presenter {
             @Override
             public void onNext(MovieListBean movieListBean) {
                 mView.returnMovieListData(movieListBean);
+                mView.refreshFinished();
             }
         }, mView.getType()));
     }

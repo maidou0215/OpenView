@@ -1,6 +1,7 @@
 package com.nov.openview.ui.Video;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +12,7 @@ import android.widget.ImageButton;
 import com.nov.openview.R;
 import com.nov.openview.base.BaseFragment;
 import com.nov.openview.bean.VideoListBean;
+import com.nov.openview.utils.PullRefreshLayout;
 import com.nov.openview.utils.CustomTextView;
 
 import butterknife.BindView;
@@ -32,6 +34,8 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter, VideoLis
     ImageButton mMainToolbarIvRight;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
+    @BindView(R.id.layout_pull_refresh)
+    PullRefreshLayout mPullRefreshLayout;
     private VideoListAdapter adapter;
 
     public static VideoListFragment newInstance(String string) {
@@ -56,7 +60,7 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter, VideoLis
 
     @Override
     protected void setListener() {
-
+        mPullRefreshLayout.setRefreshListener(this);
     }
 
     @Override
@@ -96,5 +100,30 @@ public class VideoListFragment extends BaseFragment<VideoListPresenter, VideoLis
     @Override
     public void showErrorTip(String msg) {
 
+    }
+
+    @Override
+    public void refreshFinished() {
+        mPullRefreshLayout.refreshFinished();
+    }
+
+    @Override
+    public void loadMoreFinished() {
+        mPullRefreshLayout.loadMoreFinished();
+    }
+
+    @Override
+    public void refresh() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mPresenter.loadVideoListDataRequest();
+            }
+        }, 1000);
+    }
+
+    @Override
+    public void loadMore() {
+        mPullRefreshLayout.loadMoreFinished();
     }
 }

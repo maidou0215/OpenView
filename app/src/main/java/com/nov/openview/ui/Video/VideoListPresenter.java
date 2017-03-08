@@ -25,6 +25,7 @@ public class VideoListPresenter extends VideoListContract.Presenter {
             @Override
             public void onNext(VideoListBean videoListBean) {
                 mView.returnVideoListData(videoListBean);
+                mView.refreshFinished();
             }
         }, mView.getDate()));
     }

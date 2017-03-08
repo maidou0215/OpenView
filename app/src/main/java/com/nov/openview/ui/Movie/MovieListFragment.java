@@ -1,6 +1,7 @@
 package com.nov.openview.ui.Movie;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -14,6 +15,7 @@ import com.nov.openview.R;
 import com.nov.openview.api.Api;
 import com.nov.openview.base.BaseFragment;
 import com.nov.openview.bean.MovieListBean;
+import com.nov.openview.utils.PullRefreshLayout;
 import com.nov.openview.utils.CustomTextView;
 
 import butterknife.BindView;
@@ -37,8 +39,11 @@ public class MovieListFragment extends BaseFragment<MovieListPresenter, MovieLis
     ImageButton mMainToolbarIvRight;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
+    @BindView(R.id.layout_pull_refresh)
+    PullRefreshLayout mPullRefreshLayout;
 
     private MovieListAdapter adapter;
+
     private String mType = Api.MOVIE_TYPE_IN_THEATERS;
 
     public static MovieListFragment newInstance(String string) {
@@ -63,6 +68,7 @@ public class MovieListFragment extends BaseFragment<MovieListPresenter, MovieLis
 
     @Override
     protected void setListener() {
+        mPullRefreshLayout.setRefreshListener(this);
         mMainToolbarTvTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -140,4 +146,29 @@ public class MovieListFragment extends BaseFragment<MovieListPresenter, MovieLis
 
     }
 
+
+    @Override
+    public void refreshFinished() {
+        mPullRefreshLayout.refreshFinished();
+    }
+
+    @Override
+    public void loadMoreFinished() {
+        mPullRefreshLayout.loadMoreFinished();
+    }
+
+    @Override
+    public void refresh() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+               mPresenter.loadMovieListDataRequest();
+            }
+        }, 1000);
+    }
+
+    @Override
+    public void loadMore() {
+        mPullRefreshLayout.loadMoreFinished();
+    }
 }

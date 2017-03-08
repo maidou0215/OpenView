@@ -1,5 +1,6 @@
-package com.nov.openview.demo;
+package com.nov.openview.utils;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -8,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -21,59 +23,67 @@ import com.nov.openview.R;
  */
 
 public class PullRefreshLayout extends ViewGroup {
-
-    private int lastChildIndex;
     private View mHeader;
     private View mFooter;
     private TextView mHeaderText;
+    private ImageView mHeaderArrow;
+    private ProgressBar mHeaderProgressBar;
     private TextView mFooterText;
     private ProgressBar mFooterProgressBar;
-    private ProgressBar mHeaderProgressBar;
+
     private int mLayoutContentHeight;
     private int mEffectiveHeaderHeight;
-    private Status mStatus;
-    private int mLastMoveY;
-    private int mLastMoveYIntercept;
     private int mEffictiveFooterHeight;
+    private int mlastMoveY;
+    private float mlastRotation;
+    private int mLastYIntercept;
+    private int lastChildIndex;
 
-    public PullRefreshLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    ObjectAnimator mAnimator;
+
+    private Status mStatus = Status.NORMAL;
+
+    private void updateStatus(Status status) {
+        mStatus = status;
+    }
+
+    private enum Status {
+        NORMAL, TRY_REFRESH, REFRESHING, TRY_LOADMORE, LOADING;
+    }
+
+    public interface OnRefreshListener {
+        void refreshFinished();
+
+        void loadMoreFinished();
+
+        void refresh();
+
+        void loadMore();
+    }
+
+    private OnRefreshListener mRefreshListener;
+
+    public void setRefreshListener(OnRefreshListener mRefreshListener) {
+        this.mRefreshListener = mRefreshListener;
     }
 
     public PullRefreshLayout(Context context) {
         super(context);
     }
 
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        mLayoutContentHeight = 0;
-
-        for (int j = 0; j < getChildCount(); j++) {
-            View child = getChildAt(j);
-            if (child == mHeader) {
-                child.layout(0, 0 - child.getMeasuredHeight(), child.getMeasuredWidth(), 0);
-            } else if (child == mFooter) {
-                child.layout(0, mLayoutContentHeight, child.getMeasuredWidth(), 0);
-                mEffectiveHeaderHeight = child.getHeight();
-            } else {
-                child.layout(0, mLayoutContentHeight, child.getMeasuredWidth(), mLayoutContentHeight+child.getMeasuredHeight());
-                if (j < getChildCount()) {
-                    if (child instanceof ScrollView) {
-                        mLayoutContentHeight += getMeasuredHeight();
-                        continue;
-                    }
-                    mLayoutContentHeight += child.getMeasuredHeight();
-                }
-            }
-        }
+    public PullRefreshLayout(Context context, AttributeSet attrs) {
+        super(context, attrs);
     }
 
-    /**
-     * 当所有child从xml中初始化后调用
-     */
+    public PullRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
+    // 当view的所有child从xml中被初始化后调用
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+
         lastChildIndex = getChildCount() - 1;
 
         addHeader();
@@ -81,7 +91,6 @@ public class PullRefreshLayout extends ViewGroup {
     }
 
     private void addHeader() {
-        mHeader = LayoutInflater.from(getContext()).inflate(R.layout.header, null);
         mHeader = LayoutInflater.from(getContext()).inflate(R.layout.pull_header, null, false);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -89,6 +98,7 @@ public class PullRefreshLayout extends ViewGroup {
 
         mHeaderText = (TextView) findViewById(R.id.header_text);
         mHeaderProgressBar = (ProgressBar) findViewById(R.id.header_progressbar);
+        mHeaderArrow = (ImageView) findViewById(R.id.header_arrow);
     }
 
     private void addFooter() {
@@ -111,43 +121,156 @@ public class PullRefreshLayout extends ViewGroup {
     }
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        mLayoutContentHeight = 0;
+
+        for (int i = 0; i < getChildCount(); i++) {
+            View child = getChildAt(i);
+            if (child == mHeader) {
+                child.layout(0, 0 - child.getMeasuredHeight(), child.getMeasuredWidth(), 0);
+                mEffectiveHeaderHeight = child.getHeight();
+            } else if (child == mFooter) {
+                child.layout(0, mLayoutContentHeight, child.getMeasuredWidth(), mLayoutContentHeight + child.getMeasuredHeight());
+                mEffictiveFooterHeight = child.getHeight();
+            } else {
+                child.layout(0, mLayoutContentHeight, child.getMeasuredWidth(), mLayoutContentHeight + child.getMeasuredHeight());
+                if (i < getChildCount()) {
+                    if (child instanceof ScrollView) {
+                        mLayoutContentHeight += getMeasuredHeight();
+                        continue;
+                    }
+                    mLayoutContentHeight += child.getMeasuredHeight();
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int y = (int) event.getY();
+
+        // 正在刷新或加载更多，避免重复
+        if (mStatus == Status.REFRESHING || mStatus == Status.LOADING) {
+            return true;
+        }
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mlastMoveY = y;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                int dy = mlastMoveY - y;
+
+
+                // 一直在下拉
+                if (getScrollY() <= 0 && dy <= 0) {
+                    if (mStatus == Status.TRY_LOADMORE) {
+                        scrollBy(0, dy / 30);
+                    } else {
+                        scrollBy(0, dy / 3);
+                    }
+                }
+                // 一直在上拉
+                else if (getScrollY() >= 0 && dy >= 0) {
+                    if (mStatus == Status.TRY_REFRESH) {
+                        scrollBy(0, dy / 30);
+                    } else {
+                        scrollBy(0, dy / 3);
+                    }
+                } else {
+                    scrollBy(0, dy / 3);
+                }
+
+                beforeRefreshing(dy);
+                beforeLoadMore();
+
+                break;
+            case MotionEvent.ACTION_UP:
+                // 下拉刷新，并且到达有效长度
+                if (getScrollY() <= -mEffectiveHeaderHeight) {
+                    releaseWithStatusRefresh();
+                    if (mRefreshListener != null) {
+                        mRefreshListener.refresh();
+                    }
+                }
+                // 上拉加载更多，达到有效长度
+                else if (getScrollY() >= mEffictiveFooterHeight) {
+                    releaseWithStatusLoadMore();
+                    if (mRefreshListener != null) {
+                        mRefreshListener.loadMore();
+                    }
+                } else {
+                    releaseWithStatusTryRefresh();
+                    releaseWithStatusTryLoadMore();
+                }
+                break;
+        }
+
+        mlastMoveY = y;
+        return super.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent event) {
         boolean intercept = false;
-        int y = (int) ev.getY();
+        int y = (int) event.getY();
+
         if (mStatus == Status.REFRESHING || mStatus == Status.LOADING) {
             return false;
         }
 
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                mLastMoveY = y;
-                intercept = true;
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN: {
+                // 拦截时需要记录点击位置，不然下一次滑动会出错
+                mlastMoveY = y;
+                intercept = false;
                 break;
-            case MotionEvent.ACTION_MOVE:
-                if (y > mLastMoveYIntercept) {
+            }
+            case MotionEvent.ACTION_MOVE: {
+
+                if (y > mLastYIntercept) {
                     View child = getChildAt(0);
                     intercept = getRefreshIntercept(child);
 
                     if (intercept) {
-                        updateStatus(mStatus.PULL_TO_REFRESH);
+                        updateStatus(mStatus.TRY_REFRESH);
                     }
-                } else if (y < mLastMoveYIntercept) {
+                } else if (y < mLastYIntercept) {
                     View child = getChildAt(lastChildIndex);
                     intercept = getLoadMoreIntercept(child);
+
                     if (intercept) {
-                        updateStatus(mStatus.LOADING_MORE);
+                        updateStatus(mStatus.TRY_LOADMORE);
                     }
                 } else {
                     intercept = false;
                 }
                 break;
-            case MotionEvent.ACTION_UP:
+            }
+            case MotionEvent.ACTION_UP: {
                 intercept = false;
                 break;
+            }
         }
-        mLastMoveYIntercept = y;
+
+        mLastYIntercept = y;
         return intercept;
     }
+
+    /*汇总判断 刷新和加载是否拦截*/
+    private boolean getRefreshIntercept(View child) {
+        boolean intercept = false;
+
+        if (child instanceof AdapterView) {
+            intercept = adapterViewRefreshIntercept(child);
+        } else if (child instanceof ScrollView) {
+            intercept = scrollViewRefreshIntercept(child);
+        } else if (child instanceof RecyclerView) {
+            intercept = recyclerViewRefreshIntercept(child);
+        }
+        return intercept;
+    }
+
 
     private boolean getLoadMoreIntercept(View child) {
         boolean intercept = false;
@@ -161,24 +284,7 @@ public class PullRefreshLayout extends ViewGroup {
         }
         return intercept;
     }
-
-    private void updateStatus(Status pullToRefresh) {
-
-    }
-
-    private boolean getRefreshIntercept(View child) {
-        boolean intercept = false;
-        if (child instanceof AdapterView) {
-            intercept = adapterViewRefreshIntercept(child);
-        } else if (child instanceof ScrollView) {
-            intercept = scrollViewRefreshIntercept(child);
-        } else if (child instanceof RecyclerView) {
-            intercept = recyclerViewRefreshIntercept(child);
-        }
-        return intercept;
-    }
-
-     /*汇总判断 刷新和加载是否拦截*/
+  /*汇总判断 刷新和加载是否拦截*/
 
     /*具体判断各种View是否应该拦截*/
     // 判断AdapterView下拉刷新是否拦截
@@ -247,67 +353,18 @@ public class PullRefreshLayout extends ViewGroup {
 
         return intercept;
     }
+  /*具体判断各种View是否应该拦截*/
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        int y = (int) event.getY();
 
-        if (mStatus == Status.REFRESHING || mStatus == Status.LOADING) {
-            return true;
-        }
+    /*修改header和footer的状态*/
+    public void beforeRefreshing(float dy) {
+        //计算旋转角度
+        int scrollY = Math.abs(getScrollY());
+        scrollY = scrollY > mEffectiveHeaderHeight ? mEffectiveHeaderHeight : scrollY;
+        float angle = (float) (scrollY * 1.0 / mEffectiveHeaderHeight * 180);
+        mHeaderArrow.setRotation(angle);
 
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                mLastMoveY = y;
-                break;
 
-            case MotionEvent.ACTION_MOVE:
-                int dy = mLastMoveY - y;//向下滑动了多少距离
-
-                if (getScaleY() <= 0 && dy <= 0) {
-                    //TODO scrollBy ?
-                    if (mStatus == Status.LOADING_MORE) {
-                        scrollBy(0, dy / 100);
-                    } else {
-                        scrollBy(0, dy / 3);
-                    }
-                } else if (getScrollY() >= 0 && dy >= 0) {
-                    if (mStatus == Status.PULL_TO_REFRESH) {
-                        scrollBy(0, dy / 100);
-                    } else {
-                        scrollBy(0, dy / 3);
-                    }
-                } else {
-                    scrollBy(0, dy / 3);
-                }
-                beforeRefreshing();
-                beforeLoadMore();
-            case MotionEvent.ACTION_UP:
-                // 下拉刷新，并且到达有效长度
-                if (getScrollY() <= -mEffectiveHeaderHeight) {
-                    releaseWithStatusRefresh();
-                    if (mRefreshListener != null) {
-                        mRefreshListener.refreshFinished();
-                    }
-                }
-                // 上拉加载更多，达到有效长度
-                else if (getScrollY() >= mEffictiveFooterHeight) {
-                    releaseWithStatusLoadMore();
-                    if (mRefreshListener != null) {
-                        mRefreshListener.loadMoreFinished();
-                    }
-                } else {
-                    releaseWithStatusTryRefresh();
-                    releaseWithStatusTryLoadMore();
-                }
-                break;
-        }
-
-        mLastMoveY = y;
-        return super.onTouchEvent(event);
-    }
-
-    private void beforeLoadMore() {
         if (getScrollY() <= -mEffectiveHeaderHeight) {
             mHeaderText.setText("松开刷新");
         } else {
@@ -315,12 +372,27 @@ public class PullRefreshLayout extends ViewGroup {
         }
     }
 
-    private void beforeRefreshing() {
+    public void beforeLoadMore() {
         if (getScrollY() >= mEffectiveHeaderHeight) {
             mFooterText.setText("松开加载更多");
         } else {
             mFooterText.setText("上拉加载更多");
         }
+    }
+
+    public void refreshFinished() {
+        scrollTo(0, 0);
+        mHeaderText.setText("下拉刷新");
+        mHeaderProgressBar.setVisibility(GONE);
+        mHeaderArrow.setVisibility(VISIBLE);
+        updateStatus(Status.NORMAL);
+    }
+
+    public void loadMoreFinished() {
+        mFooterText.setText("上拉加载");
+        mFooterProgressBar.setVisibility(GONE);
+        scrollTo(0, 0);
+        updateStatus(Status.NORMAL);
     }
 
     private void releaseWithStatusTryRefresh() {
@@ -338,6 +410,7 @@ public class PullRefreshLayout extends ViewGroup {
     private void releaseWithStatusRefresh() {
         scrollTo(0, -mEffectiveHeaderHeight);
         mHeaderProgressBar.setVisibility(VISIBLE);
+        mHeaderArrow.setVisibility(GONE);
         mHeaderText.setText("正在刷新");
         updateStatus(Status.REFRESHING);
     }
@@ -348,18 +421,7 @@ public class PullRefreshLayout extends ViewGroup {
         mFooterProgressBar.setVisibility(VISIBLE);
         updateStatus(Status.LOADING);
     }
+  /*修改header和footer的状态*/
 
-    public void refreshFinished() {
-        scrollTo(0, 0);
-        mHeaderText.setText("下拉刷新");
-        mHeaderProgressBar.setVisibility(GONE);
-        updateStatus(Status.NORMAL);
-    }
 
-    public void loadMoreFinished() {
-        mFooterText.setText("上拉加载");
-        mFooterProgressBar.setVisibility(GONE);
-        scrollTo(0, 0);
-        updateStatus(Status.NORMAL);
-    }
 }

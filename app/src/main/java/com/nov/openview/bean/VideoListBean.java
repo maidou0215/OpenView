@@ -1,5 +1,7 @@
 package com.nov.openview.bean;
 
+import com.chad.library.adapter.base.entity.MultiItemEntity;
+
 import java.util.List;
 
 /**
@@ -127,7 +129,9 @@ public class VideoListBean {
             this.itemList = itemList;
         }
 
-        public static class ItemListBean {
+        public static class ItemListBean implements MultiItemEntity {
+            public static final int NORMAL_TYPE = 0;
+            public static final int OTHER_TYPE = 1;
             /**
              * type : video
              * data : {"dataType":"VideoBeanForClient","id":14549,"title":"特条丨「亚瑟王：圣剑传奇」中文预告","description":"盖里奇导演的新作「King Arthur: Legend of the Sword」是英国最著名的传奇故事：拔起石中剑的亚瑟王！查理汉纳 VS 裘德洛王者之争，还有「小指头」~忠于原著的奇幻故事，今年 5 月 12 日美国上映。","provider":{"name":"YouTube","alias":"youtube","icon":"http://img.kaiyanapp.com/fa20228bc5b921e837156923a58713f6.png"},"category":"预告","author":{"id":347,"icon":"http://img.kaiyanapp.com/637723a9f19470f5d6c63b0cb4bc0fe6.jpeg?imageMogr2/quality/60","name":"华纳兄弟影业","description":"华纳兄弟影业公司（Warner Bros. Pictures）全球最大的电影和电视娱乐制作公司之一。","link":"","latestReleaseTime":1487642906000,"videoNum":37,"adTrack":null,"follow":{"itemType":"author","itemId":347,"followed":false},"authorType":"MOCK"},"cover":{"feed":"http://img.kaiyanapp.com/bf2c51dd4bc76d1358db183e1cde12d5.jpeg?imageMogr2/quality/60/format/jpg","detail":"http://img.kaiyanapp.com/bf2c51dd4bc76d1358db183e1cde12d5.jpeg?imageMogr2/quality/60/format/jpg","blurred":"http://img.kaiyanapp.com/bed8b23ada2f43df48cf5515b2d8cbd3.jpeg?imageMogr2/quality/60/format/jpg","sharing":null},"playUrl":"http://baobab.kaiyanapp.com/api/v1/playUrl?vid=14549&editionType=default&source=ucloud","duration":142,"webUrl":{"raw":"http://www.eyepetizer.net/detail.html?vid=14549","forWeibo":"http://wandou.im/3m2hf6"},"releaseTime":1487642906000,"playInfo":[{"height":480,"width":854,"urlList":[{"name":"ucloud","url":"http://baobab.kaiyanapp.com/api/v1/playUrl?vid=14549&editionType=normal&source=ucloud"},{"name":"qcloud","url":"http://baobab.kaiyanapp.com/api/v1/playUrl?vid=14549&editionType=normal&source=qcloud"}],"name":"标清","type":"normal","url":"http://baobab.kaiyanapp.com/api/v1/playUrl?vid=14549&editionType=normal&source=ucloud"},{"height":720,"width":1280,"urlList":[{"name":"ucloud","url":"http://baobab.kaiyanapp.com/api/v1/playUrl?vid=14549&editionType=high&source=ucloud"},{"name":"qcloud","url":"http://baobab.kaiyanapp.com/api/v1/playUrl?vid=14549&editionType=high&source=qcloud"}],"name":"高清","type":"high","url":"http://baobab.kaiyanapp.com/api/v1/playUrl?vid=14549&editionType=high&source=ucloud"}],"consumption":{"collectionCount":246,"shareCount":377,"replyCount":24},"campaign":null,"waterMarks":null,"adTrack":null,"tags":[{"id":22,"name":"预告","actionUrl":"eyepetizer://tag/22/?title=%E9%A2%84%E5%91%8A","adTrack":null},{"id":124,"name":"魔幻","actionUrl":"eyepetizer://tag/124/?title=%E9%AD%94%E5%B9%BB","adTrack":null},{"id":506,"name":"经典","actionUrl":"eyepetizer://tag/506/?title=%E7%BB%8F%E5%85%B8","adTrack":null},{"id":510,"name":"励志","actionUrl":"eyepetizer://tag/510/?title=%E5%8A%B1%E5%BF%97","adTrack":null},{"id":194,"name":"复古","actionUrl":"eyepetizer://tag/194/?title=%E5%A4%8D%E5%8F%A4","adTrack":null}],"type":"NORMAL","idx":0,"shareAdTrack":null,"favoriteAdTrack":null,"webAdTrack":null,"date":1487638800000,"promotion":null,"label":null,"collected":false,"played":false}
@@ -150,6 +154,15 @@ public class VideoListBean {
 
             public void setData(DataBean data) {
                 this.data = data;
+            }
+
+            @Override
+            public int getItemType() {
+                if (getType().equals("video")) {
+                    return NORMAL_TYPE;
+                } else {
+                    return OTHER_TYPE;
+                }
             }
 
             public static class DataBean {

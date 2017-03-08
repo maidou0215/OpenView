@@ -4,6 +4,7 @@ import com.nov.openview.base.BaseModel;
 import com.nov.openview.base.BasePresenter;
 import com.nov.openview.base.BaseView;
 import com.nov.openview.bean.VideoListBean;
+import com.nov.openview.utils.PullRefreshLayout;
 
 import rx.Subscriber;
 
@@ -17,7 +18,7 @@ public interface VideoListContract {
         Subscriber loadVideoListData(Subscriber<VideoListBean> observable, String date);
     }
 
-    interface View extends BaseView {
+    interface View extends BaseView, PullRefreshLayout.OnRefreshListener{
         String  getDate();
         void returnVideoListData(VideoListBean essayListBean);
     }

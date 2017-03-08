@@ -23,5 +23,7 @@ public class Api {
     public static final String MOVIE_TYPE_COMING_SOON = "coming_soon";
     public static final String MOVIE_TYPE_TOP_250 = "top250";
     public static final String MOVIE_TYPE_NEW_MOVIES = "new_movies";
+
+
     public static final String OPEN_EYE_URL = "http://baobab.kaiyanapp.com/api/v2/";
 }
