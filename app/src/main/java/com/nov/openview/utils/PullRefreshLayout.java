@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.Scroller;
 import android.widget.TextView;
 
 import com.nov.openview.R;
@@ -23,6 +24,7 @@ import com.nov.openview.R;
  */
 
 public class PullRefreshLayout extends ViewGroup {
+    private Scroller mScroller;
     private View mHeader;
     private View mFooter;
     private TextView mHeaderText;
@@ -69,14 +71,17 @@ public class PullRefreshLayout extends ViewGroup {
 
     public PullRefreshLayout(Context context) {
         super(context);
+        mScroller = new Scroller(getContext());
     }
 
     public PullRefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mScroller = new Scroller(getContext());
     }
 
     public PullRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        mScroller = new Scroller(getContext());
     }
 
     // 当view的所有child从xml中被初始化后调用
@@ -396,13 +401,15 @@ public class PullRefreshLayout extends ViewGroup {
     }
 
     private void releaseWithStatusTryRefresh() {
-        scrollBy(0, -getScrollY());
+//        scrollBy(0, -getScrollY());
+        scrollView();
         mHeaderText.setText("下拉刷新");
         updateStatus(Status.NORMAL);
     }
 
     private void releaseWithStatusTryLoadMore() {
-        scrollBy(0, -getScrollY());
+        scrollView();
+//        scrollBy(0, -getScrollY());
         mFooterText.setText("上拉加载更多");
         updateStatus(Status.NORMAL);
     }
@@ -423,5 +430,21 @@ public class PullRefreshLayout extends ViewGroup {
     }
   /*修改header和footer的状态*/
 
+    /**
+     * 回弹动画
+     */
+    private void scrollView() {
+        mScroller.startScroll(0, getScrollY(), 0, -getScrollY());
+        invalidate();
+    }
 
+    @Override
+    public void computeScroll() {
+        if (mScroller.computeScrollOffset()) // 计算当前位置
+        {
+            // 滚动
+            scrollTo(0, mScroller.getCurrY());
+            postInvalidate();
+        }
+    }
 }

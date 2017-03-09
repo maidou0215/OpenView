@@ -23,7 +23,7 @@ public class VideoListAdapter extends BaseMultiItemQuickAdapter<VideoListBean.Is
 
     public VideoListAdapter(List date) {
         super(date);
-        addItemType(VideoListBean.IssueListBean.ItemListBean.NORMAL_TYPE, R.layout.item_vedio_list);
+        addItemType(VideoListBean.IssueListBean.ItemListBean.NORMAL_TYPE, R.layout.item_video_list);
         addItemType(VideoListBean.IssueListBean.ItemListBean.OTHER_TYPE, R.layout.item_video_text);
         openLoadAnimation(BaseQuickAdapter.ALPHAIN);
     }

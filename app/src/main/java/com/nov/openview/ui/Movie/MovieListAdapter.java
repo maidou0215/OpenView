@@ -2,7 +2,6 @@ package com.nov.openview.ui.Movie;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.support.v7.graphics.Palette;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -47,15 +46,15 @@ public class MovieListAdapter extends BaseRecycleViewAdapter<MovieListBean.Subje
                     {
                         super.onResourceReady(bitmap, anim);
 
-                        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener()
-                        {
-                            @Override
-                            public void onGenerated(Palette palette)
-                            {
-                                helper.getView(R.id.bg_view).setBackgroundColor(palette.getDarkVibrantColor(mContext
-                                        .getResources().getColor(R.color.black_translucent_60)));
-                            }
-                        });
+//                        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener()
+//                        {
+//                            @Override
+//                            public void onGenerated(Palette palette)
+//                            {
+//                                helper.getView(R.id.bg_view).setBackgroundColor(palette.getDarkVibrantColor(mContext
+//                                        .getResources().getColor(R.color.black_translucent_60)));
+//                            }
+//                        });
                     }
                 });
 

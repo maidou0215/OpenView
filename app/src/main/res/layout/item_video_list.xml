@@ -26,26 +26,28 @@
             <RelativeLayout
                 android:id="@+id/rl_text"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
+                android:layout_height="match_parent">
 
                 <TextView
                     android:id="@+id/tv_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:gravity="center"
                     android:text="测试"
+                    android:layout_marginBottom="10dp"
                     android:textColor="@color/colorWhite"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    android:layout_marginStart="30dp"
+                    android:layout_above="@+id/tv_time"
+                    android:layout_alignParentEnd="true"/>
 
                 <TextView
                     android:id="@+id/tv_time"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_alignParentBottom="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/tv_title"
                     android:layout_marginTop="2dp"
-                    android:gravity="center"
                     android:text="动画  / 16'29"
                     android:textColor="@color/colorWhite" />
             </RelativeLayout>
