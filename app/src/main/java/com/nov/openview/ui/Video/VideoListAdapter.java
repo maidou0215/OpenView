@@ -24,7 +24,8 @@ public class VideoListAdapter extends BaseMultiItemQuickAdapter<VideoListBean.Is
     public VideoListAdapter(List date) {
         super(date);
         addItemType(VideoListBean.IssueListBean.ItemListBean.NORMAL_TYPE, R.layout.item_video_list);
-        addItemType(VideoListBean.IssueListBean.ItemListBean.OTHER_TYPE, R.layout.item_video_text);
+        addItemType(VideoListBean.IssueListBean.ItemListBean.BANNER_TYPE, R.layout.item_video_text);
+        addItemType(VideoListBean.IssueListBean.ItemListBean.HORIZONTAL_TYPE, R.layout.item_video_text);
         openLoadAnimation(BaseQuickAdapter.ALPHAIN);
     }
 
@@ -81,8 +82,13 @@ public class VideoListAdapter extends BaseMultiItemQuickAdapter<VideoListBean.Is
                 }
             });
             break;
-            case VideoListBean.IssueListBean.ItemListBean.OTHER_TYPE:
+            case VideoListBean.IssueListBean.ItemListBean.BANNER_TYPE:
                 helper.setText(R.id.tv_home_text, "-Weekend  special-");
+//                helper.setVisible(R.id.tv_home_text, false);
+                break;
+            case VideoListBean.IssueListBean.ItemListBean.HORIZONTAL_TYPE:
+                helper.setText(R.id.tv_home_text, "-Weekend  special-");
+                helper.setVisible(R.id.tv_home_text, false);
                 break;
         }
     }

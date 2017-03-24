@@ -99,7 +99,7 @@ public class MovieFloatingFragment extends DialogFragment {
         mBtnMovieDetail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MovieDetailsActivity.start(getActivity(), mMovieDetailsBean.getTitle(), mMovieDetailsBean.getId());
+                MovieDetailsActivity.start(getActivity(), mMovieDetailsBean.getTitle(), mMovieDetailsBean.getId(), mMovieDetailsBean.getImages().getMedium());
                 getDialog().cancel();
             }
         });

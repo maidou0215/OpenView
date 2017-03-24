@@ -22,7 +22,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by yangzhicong on 2017/3/2.
  */
 
-public class MyRippleView extends FrameLayout {
+public class MyRippleLayout extends FrameLayout {
 
     private Paint mCirclePaint;
     private Paint mPaint;
@@ -35,11 +35,11 @@ public class MyRippleView extends FrameLayout {
     RippleImageView mRippleImageView;
     CircleImageView mCircleImageView;
 
-    public MyRippleView(Context context) {
+    public MyRippleLayout(Context context) {
         super(context);
     }
 
-    public MyRippleView(Context context, AttributeSet attrs) {
+    public MyRippleLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         mRippleImageView = new RippleImageView(context);
         FrameLayout.LayoutParams rippleParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);

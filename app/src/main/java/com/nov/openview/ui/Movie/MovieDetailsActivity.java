@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -19,8 +20,12 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.nov.openview.R;
+import com.nov.openview.app.Application;
 import com.nov.openview.base.BaseActivity;
+import com.nov.openview.bean.CollectionDetailsBean;
 import com.nov.openview.bean.MovieDetailsBean;
+import com.nov.openview.db.GreenDaoUtils;
+import com.nov.openview.utils.SystemDateUtil;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -28,11 +33,15 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.nov.openview.R.mipmap.ic_adore_normal;
+import static com.nov.openview.R.mipmap.ic_adore_pressed;
+
 /**
  * Created by yangzhicong on 2017/2/17.
  */
 
 public class MovieDetailsActivity extends BaseActivity<MovieDetailsPresenter, MovieDetailsModel> implements MovieDetailsContract.View {
+
 
     @BindView(R.id.iv_movie_poster)
     ImageView mIvMoviePoster;
@@ -64,16 +73,20 @@ public class MovieDetailsActivity extends BaseActivity<MovieDetailsPresenter, Mo
     NestedScrollView mScrollingContainer;
     @BindView(R.id.main_content)
     CoordinatorLayout mMainContent;
-
+    private boolean isCollection = false;
+    private GreenDaoUtils mDaoUtils;
     private static final String MOVIE_TITLE = "movie_title";
     private static final String MOVIE_ID = "movie_id";
+    private static final String MOVIE_IMG_URL = "movie_url";
     private String mTitle;
     private String mId;
+    private String imgUrl;
 
-    public static void start(Context context, String title, String id) {
+    public static void start(Context context, String title, String id, String imgUrl) {
         Intent intent = new Intent();
         intent.putExtra(MOVIE_ID, id);
         intent.putExtra(MOVIE_TITLE, title);
+        intent.putExtra(MOVIE_IMG_URL, imgUrl);
         intent.setClass(context, MovieDetailsActivity.class);
         context.startActivity(intent);
     }
@@ -88,8 +101,10 @@ public class MovieDetailsActivity extends BaseActivity<MovieDetailsPresenter, Mo
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         initProgressDialog("正在加载...");
         Intent it = getIntent();
+        mDaoUtils = Application.getDbUtils();
         mTitle = it.getStringExtra(MOVIE_TITLE);
         mId = it.getStringExtra(MOVIE_ID);
+        imgUrl = it.getStringExtra(MOVIE_IMG_URL);
         mPresenter.loadMovieDetailsDataRequest();
     }
 
@@ -108,7 +123,7 @@ public class MovieDetailsActivity extends BaseActivity<MovieDetailsPresenter, Mo
         if (mToolbar != null)
         {
             setSupportActionBar(mToolbar);
-
+            mToolbar.inflateMenu(R.menu.menu_adore_tool_bar);
             ActionBar actionBar = getSupportActionBar();
             if (actionBar != null)
             {
@@ -137,6 +152,7 @@ public class MovieDetailsActivity extends BaseActivity<MovieDetailsPresenter, Mo
 
     @Override
     public void returnMovieDetailsData(MovieDetailsBean movieDetailsBean) {
+        imgUrl = movieDetailsBean.getImages().getLarge();
         Glide.with(mContext)
                 .load(movieDetailsBean.getImages().getLarge())
                 .asBitmap()
@@ -213,6 +229,59 @@ public class MovieDetailsActivity extends BaseActivity<MovieDetailsPresenter, Mo
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_adore_tool_bar, menu);
+        if (mDaoUtils.queryCollection(mId)) {
+            menu.getItem(0).setIcon(ic_adore_pressed);
+            isCollection = true;
+        } else {
+            menu.getItem(0).setIcon(ic_adore_normal);
+            isCollection = false;
+        }
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_action_collection:
+                if (isCollection) {
+                    item.setIcon(ic_adore_normal);
+                    isCollection = false;
+                    boolean b = deleteCollection();
+                    if (b) {
+                        showErrorTip("取消收藏");
+                    } else {
+                        showErrorTip("取消收藏失败");
+                    }
+
+                } else {
+                    item.setIcon(ic_adore_pressed);
+                    isCollection = true;
+                    boolean b = saveCollection();
+                    if (b) {
+                        showErrorTip("收藏");
+                    } else {
+                        showErrorTip("收藏失败");
+                    }
+
+                }
+        }
+        return false;
+    }
+
+    private boolean deleteCollection() {
+        boolean deleted = mDaoUtils.deleteCollection(mId);
+        return deleted;
+    }
+
+    private boolean saveCollection() {
+        CollectionDetailsBean book_db = new CollectionDetailsBean();
+        book_db.setTitle(mTitle);
+        book_db.setType(GreenDaoUtils.TYPE_MOVIE);
+        book_db.setUrl(mId);
+        book_db.setImgUrl(imgUrl);
+        book_db.setTime(SystemDateUtil.getStringDate());
+        boolean b = mDaoUtils.insertCollection(book_db);
+        return b;
+
     }
 }

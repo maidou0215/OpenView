@@ -147,7 +147,11 @@ public class EssayListFragment extends BaseFragment<EssayListPresenter, EssayLis
         mMobanTollbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EssayDetailActivity.start(getContext(), String.valueOf(item.getId()));
+                String url = "";
+                if (!item.getThumbs().isEmpty()) {
+                    url = item.getThumbs().get(0).getSmall().getUrl();
+                }
+                EssayDetailActivity.start(getContext(), String.valueOf(item.getId()), url, String.valueOf(item.getTitle()));
             }
         });
         if (!item.getThumbs().isEmpty()) {

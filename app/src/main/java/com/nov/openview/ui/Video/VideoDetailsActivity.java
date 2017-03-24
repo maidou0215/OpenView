@@ -204,7 +204,7 @@ public class VideoDetailsActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_adore_tool_bar, menu);
+//        getMenuInflater().inflate(R.menu.menu_adore_tool_bar, menu);
         return true;
     }
 

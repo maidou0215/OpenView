@@ -1,6 +1,7 @@
 package com.nov.openview.ui.Collection;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,9 +11,13 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import com.nov.openview.R;
+import com.nov.openview.app.Application;
 import com.nov.openview.base.BaseFragment;
 import com.nov.openview.bean.CollectionDetailsBean;
+import com.nov.openview.db.DbObserver;
+import com.nov.openview.db.GreenDaoUtils;
 import com.nov.openview.utils.CustomTextView;
+import com.nov.openview.utils.PullRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +28,10 @@ import butterknife.BindView;
  * Created by yangzhicong on 2017/2/16.
  */
 
-public class CollectionListFragment extends BaseFragment {
+public class CollectionListFragment extends BaseFragment implements DbObserver, PullRefreshLayout.OnRefreshListener {
 
     public static String TAG = CollectionListFragment.class.getSimpleName();
-    public static final int LIST_COUNT = 2;
+    public static final int LIST_COUNT = 1;
     @BindView(R.id.main_toolbar_tv_time)
     CustomTextView mMainToolbarTvTime;
     @BindView(R.id.tv_toolbar_title)
@@ -39,8 +44,11 @@ public class CollectionListFragment extends BaseFragment {
     AppBarLayout mToolbarAbl;
     @BindView(R.id.movies_listing)
     RecyclerView mMoviesListing;
+    @BindView(R.id.layout_pull_refresh)
+    PullRefreshLayout mPullRefreshLayout;
 
     private CollectionListAdapter adapter;
+    private GreenDaoUtils mDaoUtils;
 
     public static CollectionListFragment newInstance(String string) {
         Bundle args = new Bundle();
@@ -60,13 +68,9 @@ public class CollectionListFragment extends BaseFragment {
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), LIST_COUNT);
         //TODO 测试数据
         List<CollectionDetailsBean> movieList = new ArrayList<>();
-        CollectionDetailsBean collectionDetailsBean;
-//        for (int i = 0; i < 8; i++) {
-//            collectionDetailsBean = new CollectionDetailsBean();
-//            collectionDetailsBean.setName("Movie");
-//            collectionDetailsBean.setCount(String.valueOf((int)(Math.random() * 10+1)));
-//            movieList.add(collectionDetailsBean);
-//        }
+        mDaoUtils = Application.getDbUtils();
+        mDaoUtils.attach(this);
+        movieList = mDaoUtils.queryAllCollection();
         mMoviesListing.setLayoutManager(layoutManager);
         adapter = new CollectionListAdapter(movieList);
         adapter.setEmptyViewGroup((ViewGroup) mMoviesListing.getParent());
@@ -75,7 +79,7 @@ public class CollectionListFragment extends BaseFragment {
 
     @Override
     protected void setListener() {
-
+        mPullRefreshLayout.setRefreshListener(this);
     }
 
     @Override
@@ -91,4 +95,40 @@ public class CollectionListFragment extends BaseFragment {
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mDaoUtils.detach(this);
+    }
+
+    @Override
+    public void updateCollection() {
+        adapter.setNewData(mDaoUtils.queryAllCollection());
+        refreshFinished();
+    }
+
+    @Override
+    public void refreshFinished() {
+        mPullRefreshLayout.refreshFinished();
+    }
+
+    @Override
+    public void loadMoreFinished() {
+        mPullRefreshLayout.loadMoreFinished();
+    }
+
+    @Override
+    public void refresh() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                updateCollection();
+            }
+        }, 1000);
+    }
+
+    @Override
+    public void loadMore() {
+        mPullRefreshLayout.loadMoreFinished();
+    }
 }

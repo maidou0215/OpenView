@@ -7,7 +7,7 @@
                 android:background="@color/colorPrimaryDark"
                 tools:context="com.nov.openview.ui.Main.SplashActivity">
 
-    <com.nov.openview.utils.MyRippleView
+    <com.nov.openview.utils.MyRippleLayout
         android:layout_gravity="center"
         android:gravity="center"
         android:id="@+id/rv_demo"

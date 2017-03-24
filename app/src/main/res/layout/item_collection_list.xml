@@ -7,53 +7,88 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="126dp">
-
-        <ImageView
-            android:id="@+id/iv_collections_img"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/pic_movie"/>
+        android:layout_height="120dp">
 
         <LinearLayout
             android:id="@+id/ll_moban"
-            android:background="@drawable/boman_selector_video"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@drawable/boman_selector_essay"
+            android:alpha="0.8"
             android:orientation="vertical">
 
-            <RelativeLayout
+            <LinearLayout
                 android:id="@+id/rl_text"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
+                android:layout_height="0dp"
+                android:layout_weight="1">
 
-                <TextView
-                    android:id="@+id/tv_collections_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:gravity="center"
-                    android:text="测试"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="28sp"/>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_gravity="center_vertical"
+                    android:id="@+id/iv_collection_img"
+                    android:src="@drawable/pic_movie"
+                    android:layout_margin="15dp"
+                    android:scaleType="centerCrop"
+                    android:layout_width="85dp"
+                    android:layout_height="85dp"/>
 
-                <TextView
-                    android:id="@+id/tv_collections_count"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tv_collections_name"
-                    android:layout_marginTop="2dp"
-                    android:gravity="center"
-                    android:text="动画  / 16'29"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="18dp"/>
-            </RelativeLayout>
+                <LinearLayout
+                    android:id="@+id/ll_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="10dp"
+                    android:layout_height="match_parent">
 
+                    <TextView
+                        android:id="@+id/tv_collection_title"
+                        android:textColor="@color/colorWhite"
+                        android:textStyle="bold"
+                        android:gravity="center_horizontal"
+                        android:text="————标题————"
+                        android:maxLines="1"
+                        android:textSize="14dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:layout_marginTop="10dp"
+                        android:id="@+id/tv_collection_type"
+                        android:textColor="@color/colorLightGray"
+                        android:textStyle="bold"
+                        android:gravity="center_horizontal"
+                        android:text="类型：视频"
+                        android:maxLines="2"
+                        android:textSize="15dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:layout_marginTop="10dp"
+                        android:id="@+id/tv_collection_time"
+                        android:textColor="@color/colorLightGray"
+                        android:textStyle="bold"
+                        android:gravity="center_horizontal"
+                        android:text="收藏时间：2016/02/04 11:23:04"
+                        android:maxLines="1"
+                        android:textSize="15dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_marginStart="14dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorGray"
+                />
         </LinearLayout>
-
-
     </FrameLayout>
 
 </LinearLayout>

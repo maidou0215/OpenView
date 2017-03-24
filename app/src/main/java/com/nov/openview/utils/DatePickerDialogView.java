@@ -3,15 +3,13 @@ package com.nov.openview.utils;
 import android.app.Activity;
 import android.content.Context;
 
-import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
-
 import java.util.Calendar;
 
 /**
  * 时间提示框选择
  * Created by yangzhicong on 2017/2/21.
  */
-public class DatePickerDialogView extends DatePickerDialog {
+public class DatePickerDialogView extends com.wdullaer.materialdatetimepicker.date.DatePickerDialog {
 
     private static int mYear = Calendar.getInstance().get(Calendar.YEAR);
     private static int mMonth = Calendar.getInstance().get(Calendar.MONTH);
@@ -24,9 +22,9 @@ public class DatePickerDialogView extends DatePickerDialog {
     public static void showDialog(Context context, final onDateSetListener listener) {
         Calendar now = Calendar.getInstance();
         now.set(mYear, mMonth, mDay);
-        DatePickerDialog dialog = DatePickerDialog.newInstance(new DatePickerDialog.OnDateSetListener() {
+        com.wdullaer.materialdatetimepicker.date.DatePickerDialog dialog = com.wdullaer.materialdatetimepicker.date.DatePickerDialog.newInstance(new com.wdullaer.materialdatetimepicker.date.DatePickerDialog.OnDateSetListener() {
             @Override
-            public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+            public void onDateSet(com.wdullaer.materialdatetimepicker.date.DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar temp = Calendar.getInstance();
                 temp.clear();
                 temp.set(year, monthOfYear, dayOfMonth);
@@ -45,6 +43,6 @@ public class DatePickerDialogView extends DatePickerDialog {
         // set the dialog not vibrate when date change, default value is true
         dialog.vibrate(false);
 
-        dialog.show(((Activity)context).getFragmentManager(), "DatePickerDialog");
+        dialog.show(((Activity)context).getFragmentManager(), "DatePickerDialogView");
     }
 }

@@ -4,7 +4,7 @@ import android.os.Handler;
 
 import com.nov.openview.R;
 import com.nov.openview.base.BaseActivity;
-import com.nov.openview.utils.MyRippleView;
+import com.nov.openview.utils.MyRippleLayout;
 
 import butterknife.BindView;
 
@@ -15,7 +15,7 @@ import butterknife.BindView;
 public class SplashActivity extends BaseActivity {
 
     @BindView(R.id.rv_demo)
-    MyRippleView mRippleImageView;
+    MyRippleLayout mRippleImageView;
 
     @Override
     protected int getContentView() {

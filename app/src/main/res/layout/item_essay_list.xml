@@ -26,13 +26,21 @@
                 android:layout_height="0dp"
                 android:layout_weight="1">
 
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_gravity="center_vertical"
+                    android:id="@+id/iv_essay_img"
+                    android:layout_margin="15dp"
+                    android:scaleType="centerCrop"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"/>
+
                 <LinearLayout
                     android:id="@+id/ll_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:layout_width="0dp"
                     android:gravity="center_vertical"
-                    android:layout_marginStart="40dp"
+                    android:layout_marginStart="20dp"
                     android:layout_marginEnd="10dp"
                     android:layout_height="match_parent">
 
@@ -56,14 +64,6 @@
                         android:layout_height="wrap_content"/>
 
                 </LinearLayout>
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:layout_gravity="center_vertical"
-                    android:id="@+id/iv_essay_img"
-                    android:layout_margin="15dp"
-                    android:scaleType="centerCrop"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"/>
             </LinearLayout>
 
             <View

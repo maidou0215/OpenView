@@ -27,12 +27,6 @@ public class EssayListAdapter extends BaseRecycleViewAdapter<EssayListBean.Posts
     protected void convert(BaseViewHolder helper, final EssayListBean.PostsBean item) {
         helper.setText(R.id.tv_essay_title, item.getTitle())
                 .setText(R.id.tv_essay_summary, item.getAbstractX());
-        helper.getView(R.id.ll_moban).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EssayDetailActivity.start(mContext, String.valueOf(item.getId()));
-            }
-        });
         if (!item.getThumbs().isEmpty()) {
             Glide.with(mContext)
                     .load(item.getThumbs().get(0).getSmall().getUrl())
@@ -43,6 +37,16 @@ public class EssayListAdapter extends BaseRecycleViewAdapter<EssayListBean.Posts
         } else {
             helper.getView(R.id.iv_essay_img).setVisibility(View.GONE);
         }
+        helper.getView(R.id.ll_moban).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String url = "";
+                if (!item.getThumbs().isEmpty()) {
+                    url = item.getThumbs().get(0).getSmall().getUrl();
+                }
+                EssayDetailActivity.start(mContext, String.valueOf(item.getId()), url, String.valueOf(item.getTitle()));
+            }
+        });
     }
 
 }

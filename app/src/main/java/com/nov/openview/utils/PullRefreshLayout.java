@@ -50,7 +50,7 @@ public class PullRefreshLayout extends ViewGroup {
     }
 
     private enum Status {
-        NORMAL, TRY_REFRESH, REFRESHING, TRY_LOADMORE, LOADING;
+        NORMAL, TRY_REFRESH, REFRESHING, TRY_LOAD_MORE, LOADING;
     }
 
     public interface OnRefreshListener {
@@ -169,7 +169,7 @@ public class PullRefreshLayout extends ViewGroup {
 
                 // 一直在下拉
                 if (getScrollY() <= 0 && dy <= 0) {
-                    if (mStatus == Status.TRY_LOADMORE) {
+                    if (mStatus == Status.TRY_LOAD_MORE) {
                         scrollBy(0, dy / 30);
                     } else {
                         scrollBy(0, dy / 3);
@@ -245,7 +245,7 @@ public class PullRefreshLayout extends ViewGroup {
                     intercept = getLoadMoreIntercept(child);
 
                     if (intercept) {
-                        updateStatus(mStatus.TRY_LOADMORE);
+                        updateStatus(mStatus.TRY_LOAD_MORE);
                     }
                 } else {
                     intercept = false;
@@ -383,6 +383,10 @@ public class PullRefreshLayout extends ViewGroup {
         } else {
             mFooterText.setText("上拉加载更多");
         }
+    }
+
+    public void startRefresh() {
+
     }
 
     public void refreshFinished() {

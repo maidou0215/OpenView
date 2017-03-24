@@ -4,9 +4,9 @@
       xmlns:tools="http://schemas.android.com/tools">
 
     <item
+        android:id="@+id/menu_action_collection"
         android:checkable="false"
-        android:id="@+id/action_collection"
         android:icon="@drawable/adore_selector"
-        android:title="Collection"
-        app:showAsAction="always" />
+        android:title="收藏"
+        app:showAsAction="always"/>
 </menu>

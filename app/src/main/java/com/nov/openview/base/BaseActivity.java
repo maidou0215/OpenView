@@ -96,5 +96,6 @@ public abstract class BaseActivity<T extends BasePresenter, E extends BaseModel>
         progressDialog = new ProgressDialog(this, R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage(msg);
+        progressDialog.setCanceledOnTouchOutside(false);
     }
 }
