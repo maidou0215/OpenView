@@ -168,7 +168,7 @@ public class VideoListBean {
                 }
             }
 
-            public static class DataBean {
+            public static class DataBean  {
                 /**
                  * dataType : VideoBeanForClient
                  * id : 14549

@@ -7,11 +7,14 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.google.gson.Gson;
 import com.nov.openview.R;
 import com.nov.openview.bean.CollectionDetailsBean;
+import com.nov.openview.bean.VideoDataBean;
 import com.nov.openview.db.GreenDaoUtils;
 import com.nov.openview.ui.Essay.EssayDetailActivity;
 import com.nov.openview.ui.Movie.MovieDetailsActivity;
+import com.nov.openview.ui.Video.VideoDetailsActivity;
 
 import java.util.List;
 
@@ -38,8 +41,12 @@ public class CollectionListAdapter extends BaseQuickAdapter<CollectionDetailsBea
             public void onClick(View view) {
                 if (item.getType().equals(GreenDaoUtils.TYPE_ESSAY)) {
                     EssayDetailActivity.start(mContext, String.valueOf(item.getUrl()), String.valueOf(item.getUrl()), String.valueOf(item.getTitle()));
-                } else {
+                } else if (item.getType().equals(GreenDaoUtils.TYPE_MOVIE)) {
                     MovieDetailsActivity.start(mContext, item.getTitle(), item.getUrl(), item.getImgUrl());
+                } else {
+                    Gson gson = new Gson();
+                    VideoDataBean video = gson.fromJson(item.getUrl(),VideoDataBean.class);
+                    VideoDetailsActivity.start(mContext, video);
                 }
             }
         });

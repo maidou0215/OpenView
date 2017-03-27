@@ -1,6 +1,5 @@
 package com.nov.openview.ui.Video;
 
-import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -11,6 +10,7 @@ import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.nov.openview.R;
+import com.nov.openview.bean.VideoDataBean;
 import com.nov.openview.bean.VideoListBean;
 
 import java.util.List;
@@ -20,6 +20,8 @@ import java.util.List;
  */
 
 public class VideoListAdapter extends BaseMultiItemQuickAdapter<VideoListBean.IssueListBean.ItemListBean, BaseViewHolder> {
+
+    private VideoDataBean mVideoDataBean;
 
     public VideoListAdapter(List date) {
         super(date);
@@ -71,14 +73,21 @@ public class VideoListAdapter extends BaseMultiItemQuickAdapter<VideoListBean.Is
             helper.getView(R.id.ll_moban).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString(VideoDetailsActivity.BUNDLE_TITLE, item.getData().getTitle());
-                    bundle.putString(VideoDetailsActivity.BUNDLE_TIME, "#" + stringTime);
-                    bundle.putString(VideoDetailsActivity.BUNDLE_DESC, item.getData().getDescription());//视频描述
-                    bundle.putString(VideoDetailsActivity.BUNDLE_BLURRED, item.getData().getCover().getBlurred());//模糊图片地址
-                    bundle.putString(VideoDetailsActivity.BUNDLE_FEED, item.getData().getCover().getFeed());//图片地址
-                    bundle.putString(VideoDetailsActivity.BUNDLE_VIDEO, item.getData().getPlayUrl());//视频播放地址
-                    VideoDetailsActivity.start(mContext, bundle);
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString(VideoDetailsActivity.BUNDLE_TITLE, item.getData().getTitle());
+//                    bundle.putString(VideoDetailsActivity.BUNDLE_TIME, "#" + stringTime);
+//                    bundle.putString(VideoDetailsActivity.BUNDLE_DESC, item.getData().getDescription());//视频描述
+//                    bundle.putString(VideoDetailsActivity.BUNDLE_BLURRED, item.getData().getCover().getBlurred());//模糊图片地址
+//                    bundle.putString(VideoDetailsActivity.BUNDLE_FEED, item.getData().getCover().getFeed());//图片地址
+//                    bundle.putString(VideoDetailsActivity.BUNDLE_VIDEO, item.getData().getPlayUrl());//视频播放地址
+                    mVideoDataBean = new VideoDataBean();
+                    mVideoDataBean.setTitle(item.getData().getTitle());
+                    mVideoDataBean.setBlurredUrl(item.getData().getCover().getBlurred());
+                    mVideoDataBean.setFeedUrl(item.getData().getCover().getFeed());
+                    mVideoDataBean.setTime("#" + stringTime);
+                    mVideoDataBean.setVideoAddr(item.getData().getPlayUrl());
+                    mVideoDataBean.setDescription(item.getData().getDescription());
+                    VideoDetailsActivity.start(mContext, mVideoDataBean);
                 }
             });
             break;

@@ -4,10 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -15,9 +15,15 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.gson.Gson;
 import com.nov.openview.R;
+import com.nov.openview.app.Application;
 import com.nov.openview.base.BaseActivity;
+import com.nov.openview.bean.CollectionDetailsBean;
+import com.nov.openview.bean.VideoDataBean;
+import com.nov.openview.db.GreenDaoUtils;
 import com.nov.openview.utils.CustomTextView;
+import com.nov.openview.utils.SystemDateUtil;
 import com.shuyu.gsyvideoplayer.GSYPreViewManager;
 import com.shuyu.gsyvideoplayer.GSYVideoPlayer;
 import com.shuyu.gsyvideoplayer.listener.LockClickListener;
@@ -26,13 +32,15 @@ import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 
 import butterknife.BindView;
 
+import static com.nov.openview.R.mipmap.ic_adore_normal;
+import static com.nov.openview.R.mipmap.ic_adore_pressed;
+
 /**
  * Created by yangzhicong on 2017/2/17.
  */
 
 public class VideoDetailsActivity extends BaseActivity {
 
-    private static final String MOVIE_ID = "video_id";
     @BindView(R.id.main_toolbar_tv_time)
     CustomTextView mMainToolbarTvTime;
     @BindView(R.id.tv_toolbar_title)
@@ -52,31 +60,24 @@ public class VideoDetailsActivity extends BaseActivity {
     @BindView(R.id.video_detail_desc)
     TextView mVideoDetailDesc;
 
-    public static final String BUNDLE_TITLE = "bundle_title";
-    public static final String BUNDLE_TIME = "bundle_time";
-    /** 描述*/
-    public static final String BUNDLE_DESC = "bundle_desc";
-    /**模糊图片地址*/
-    public static final String BUNDLE_BLURRED = "bundle_blurred";
-    /**图片地址*/
-    public static final String BUNDLE_FEED = "bundle_feed";
-    /**播放地址*/
-    public static final String BUNDLE_VIDEO = "bundle_video";
-
+    private boolean isCollection = false;
+    private GreenDaoUtils mDaoUtils;
+    public static final String DATA = "data";
+    private String mId;
     private String feed;
     private String title;
     private String time;
     private String desc;
     private String blurred;
-    private String video;
+    private String video_addr;
     private boolean isPause;
     private boolean isPlay;
     private ImageView imageView;
     private OrientationUtils orientationUtils;
 
-    public static void start(Context context, Bundle bundle) {
+    public static void start(Context context, VideoDataBean dataBean) {
         Intent intent = new Intent();
-        intent.putExtras(bundle);
+        intent.putExtra(DATA, dataBean);
         intent.setClass(context, VideoDetailsActivity.class);
         context.startActivity(intent);
     }
@@ -89,12 +90,14 @@ public class VideoDetailsActivity extends BaseActivity {
     @Override
     protected void initView() {
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        feed = getIntent().getStringExtra(BUNDLE_FEED);//背景图片
-        title = getIntent().getStringExtra(BUNDLE_TITLE);
-        time = getIntent().getStringExtra(BUNDLE_TIME);//时间
-        desc = getIntent().getStringExtra(BUNDLE_DESC);//视频详情
-        blurred = getIntent().getStringExtra(BUNDLE_BLURRED);//模糊图片
-        video = getIntent().getStringExtra(BUNDLE_VIDEO);//视频播放地址
+        VideoDataBean video = (VideoDataBean) getIntent().getSerializableExtra(DATA);
+        mDaoUtils = Application.getDbUtils();
+        feed = video.getFeedUrl();//背景图片
+        title = video.getTitle();
+        time = video.getTime();//时间
+        desc = video.getDescription();//视频详情
+        blurred = video.getBlurredUrl();//模糊图片
+        video_addr = video.getVideoAddr();//视频播放地址
         imageView = new ImageView(mContext);
         Glide.with(mContext)
                 .load(feed)
@@ -112,6 +115,8 @@ public class VideoDetailsActivity extends BaseActivity {
         mVideoDetailDesc.setText(desc);
         mVideoDetailTime.setText(time);
         playerSet();
+        Gson gson = new Gson();
+        mId = gson.toJson(video);
     }
 
     private void playerSet() {
@@ -119,7 +124,7 @@ public class VideoDetailsActivity extends BaseActivity {
         mVideoPlay.setThumbImageView(imageView);
         mVideoPlay.getTitleTextView().setVisibility(View.GONE);
         mVideoPlay.getBackButton().setVisibility(View.GONE);
-        mVideoPlay.setUp(video, true, null, title);
+        mVideoPlay.setUp(video_addr, true, null, title);
         mVideoPlay.setNeedShowWifiTip(false);
         mVideoPlay.setIsTouchWiget(true);
         //关闭自动旋转
@@ -204,7 +209,14 @@ public class VideoDetailsActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.menu_adore_tool_bar, menu);
+        getMenuInflater().inflate(R.menu.menu_adore_tool_bar, menu);
+        if (mDaoUtils.queryCollection(mId)) {
+            menu.getItem(0).setIcon(ic_adore_pressed);
+            isCollection = true;
+        } else {
+            menu.getItem(0).setIcon(ic_adore_normal);
+            isCollection = false;
+        }
         return true;
     }
 
@@ -230,11 +242,62 @@ public class VideoDetailsActivity extends BaseActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_action_collection:
+                if (isCollection) {
+                    item.setIcon(ic_adore_normal);
+                    isCollection = false;
+                    boolean b = deleteCollection();
+                    if (b) {
+                        showTip("取消收藏");
+                    } else {
+                        showTip("取消收藏失败");
+                    }
+
+                } else {
+                    item.setIcon(ic_adore_pressed);
+                    isCollection = true;
+                    boolean b = saveCollection();
+                    if (b) {
+                        showTip("收藏");
+                    } else {
+                        showTip("收藏失败");
+                    }
+
+                }
+        }
+        return false;
+    }
+
+    private void showTip(String string) {
+        toast(string);
+    }
+
+
+    @Override
     protected void onDestroy() {
         GSYVideoPlayer.releaseAllVideos();
         GSYPreViewManager.instance().releaseMediaPlayer();
         if (orientationUtils != null)
             orientationUtils.releaseListener();
         super.onDestroy();
+    }
+
+    private boolean deleteCollection() {
+        boolean deleted = mDaoUtils.deleteCollection(mId);
+        return deleted;
+    }
+
+    private boolean saveCollection() {
+        CollectionDetailsBean book_db = new CollectionDetailsBean();
+        book_db.setTitle(title);
+        book_db.setType(GreenDaoUtils.TYPE_VIDEO);
+        book_db.setUrl(mId);
+        book_db.setImgUrl(feed);
+        book_db.setTime(SystemDateUtil.getStringDate());
+        boolean b = mDaoUtils.insertCollection(book_db);
+        return b;
+
     }
 }
