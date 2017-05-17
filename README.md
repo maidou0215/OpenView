@@ -26,7 +26,7 @@
 
 > 感谢[豆瓣API](https://developers.douban.com/wiki/?title=api_v2)提供的API接口，部分数据为Jsoup解析HTML获取，原作公司拥有所有权利。本程序仅供测试学习，用于其他用途所造成的纠纷与本人无关。部分图标资源来自网络，如有侵权请联系我删除。
 
-> 此程序为本人基于Material design，RxJava与Retrofit的练习之作，其中还有很多不足与缺陷，如果遇到请联系本人邮箱或提交lssues
+> 此程序为本人基于RxJava与Retrofit的练习之作，其中还有很多不足与缺陷，如果遇到请联系本人邮箱或提交lssues
 
 
 
