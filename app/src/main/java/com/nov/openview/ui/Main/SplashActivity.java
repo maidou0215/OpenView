@@ -24,6 +24,7 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        mRippleImageView.setRippleColor(R.color.mdtp_red);
         mRippleImageView.startAnimation();
         new Handler().postDelayed(new Runnable() {
             @Override

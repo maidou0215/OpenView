@@ -33,6 +33,8 @@ public class ScrollViewBehavior extends AppBarLayout.ScrollingViewBehavior {
     private ViewGroup.LayoutParams params;
     private ValueAnimator scaleAnim;
     private boolean animationStart = false;
+    private static final int TOP_CHILD_FLING_THRESHOLD = 3;
+    private boolean isPositive;
 
     public ScrollViewBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -59,6 +61,33 @@ public class ScrollViewBehavior extends AppBarLayout.ScrollingViewBehavior {
         return superLayout;
     }
 
+    @Override
+    public void onNestedPreScroll(CoordinatorLayout coordinatorLayout, View child, View target, int dx, int dy, int[] consumed) {
+        super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed);
+        Log.i(TAG, "child.height=" + child.getHeight());
+        Log.i(TAG, "target.height=" + target.getHeight());
+        Log.i(TAG, "target.getTranslationY=" + target.getTranslationY());
+        Log.i(TAG, "params.height=" + params.height);
+        Log.i(TAG, "mTargetScalingView.height=" + mTargetScalingView.getHeight());
+        Log.i(TAG, "mOriginalHeight=" + mOriginalHeight);
+        Log.i(TAG, "parentHeight=" + ((ViewGroup)mTargetScalingView.getParent()).getHeight());
+        Log.i(TAG, "TopAndBottomOffset=" + getTopAndBottomOffset());
+        isPositive = dy > 0;
+    }
+
+//    @Override
+//    public boolean onNestedFling(CoordinatorLayout coordinatorLayout, View child, View target, float velocityX, float velocityY, boolean consumed) {
+//        if (velocityY > 0 && !isPositive || velocityY < 0 && isPositive) {
+//            velocityY = velocityY * -1;
+//        }
+//        if (target instanceof RecyclerView && velocityY < 0) {
+//            final RecyclerView recyclerView = (RecyclerView) target;
+//            final View firstChild = recyclerView.getChildAt(0);
+//            final int childAdapterPosition = recyclerView.getChildAdapterPosition(firstChild);
+//            consumed = childAdapterPosition > TOP_CHILD_FLING_THRESHOLD;
+//        }
+//        return super.onNestedFling(coordinatorLayout, child, target, velocityX, velocityY, consumed);
+//    }
 
     @Override
     public void onNestedScroll(CoordinatorLayout coordinatorLayout, View child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
@@ -66,15 +95,16 @@ public class ScrollViewBehavior extends AppBarLayout.ScrollingViewBehavior {
             super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
             return;
         }
-        Log.i(TAG, "child.height=" + child.getHeight());
-        Log.i(TAG, "target.height=" + target.getHeight());
-        Log.i(TAG, "params.height=" + params.height);
-        Log.i(TAG, "mTargetScalingView.height=" + mTargetScalingView.getHeight());
-        Log.i(TAG, "mOriginalHeight=" + mOriginalHeight);
-        Log.i(TAG, "dyConsumed=" + dyConsumed);
-        Log.i(TAG, "dyUnconsumed=" + dyUnconsumed);
-        Log.i(TAG, "parentHeight=" + ((ViewGroup)mTargetScalingView.getParent()).getHeight());
-        Log.i(TAG, "TopAndBottomOffset=" + getTopAndBottomOffset());
+//        Log.i(TAG, "child.height=" + child.getHeight());
+//        Log.i(TAG, "target.height=" + target.getHeight());
+//        Log.i(TAG, "target.getTranslationY=" + target.getTranslationY());
+//        Log.i(TAG, "params.height=" + params.height);
+//        Log.i(TAG, "mTargetScalingView.height=" + mTargetScalingView.getHeight());
+//        Log.i(TAG, "mOriginalHeight=" + mOriginalHeight);
+//        Log.i(TAG, "dyConsumed=" + dyConsumed);
+//        Log.i(TAG, "dyUnconsumed=" + dyUnconsumed);
+//        Log.i(TAG, "parentHeight=" + ((ViewGroup)mTargetScalingView.getParent()).getHeight());
+//        Log.i(TAG, "TopAndBottomOffset=" + getTopAndBottomOffset());
 
         if (dyUnconsumed < 0 && params.height >= MAX_SCROLL_HEIGHT && mTargetScalingView.getVisibility() == View.VISIBLE && params.height >= mOriginalHeight) {
             int absDyUnconsumed = Math.abs(dyUnconsumed);
@@ -82,8 +112,8 @@ public class ScrollViewBehavior extends AppBarLayout.ScrollingViewBehavior {
             params.width = ViewGroup.LayoutParams.MATCH_PARENT;
             params.height = mOriginalHeight + mTotalDyUnconsumed;
             mTargetScalingView.setLayoutParams(params);
-            mMyDotView.setVisibility(View.VISIBLE);
-            if (!animationStart) {
+            if (!animationStart && params.height > coordinatorLayout.getHeight() / 2) {
+                mMyDotView.setVisibility(View.VISIBLE);
                 mMyDotView.startAnimators();
                 animationStart = true;
             }

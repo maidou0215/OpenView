@@ -13,12 +13,10 @@ public class GreenDaoHelper {
     private static SQLiteDatabase db;
     private static GreenDaoHelper mInstance;
     private DaoMaster.DevOpenHelper openHelper;
-    private Context context;
     private static DaoMaster mDaoMaster;
     private static DaoSession mDaoSession;
 
     private GreenDaoHelper(Context context){
-        this.context = context;
         openHelper = new DaoMaster.DevOpenHelper(context, dbName, null);
         db = openHelper.getWritableDatabase();
         mDaoMaster = new DaoMaster(db);
