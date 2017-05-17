@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:fillViewport="true"
-        app:layout_behavior="@string/ScrollViewBehavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/essay_listing"
