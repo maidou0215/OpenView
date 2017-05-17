@@ -2,7 +2,7 @@
 
 基于豆瓣API，豆瓣一刻，开眼视频的聚合阅读客户端，包含文章阅读，OpenEye视频播放，电影榜单，收藏，搜索（待加）。采用MVP架构，集成Rxjava，Retrofit等主流框架。
 
-##开源技术
+## 开源技术
 
 - [Rxjava](https://github.com/ReactiveX/RxJava)
 - [RxAndroid](https://github.com/ReactiveX/RxAndroid)
@@ -12,7 +12,7 @@
 - [GreenDAO](https://github.com/greenrobot/greenDAO)
 - [GSYVideoPlayer](https://github.com/androidok/GSYVideoPlayer)
 
-## 效果图：
+## 效果图
 
 ![img](http://wx4.sinaimg.cn/mw690/6ab241dbgy1ffofv2gbvij20w01hc148.jpg)
 
