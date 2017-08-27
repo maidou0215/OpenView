@@ -6,21 +6,19 @@
 
 - [Rxjava](https://github.com/ReactiveX/RxJava)
 - [RxAndroid](https://github.com/ReactiveX/RxAndroid)
-- [Retrofit](https://github.com/square/retrofit)
-- [Glide](https://github.com/bumptech/glide)
+- [Volley](https://github.com/square/retrofit)
+- [UIL](https://github.com/bumptech/glide)
 - [Butter Knife](https://github.com/JakeWharton/butterknife)
 - [GreenDAO](https://github.com/greenrobot/greenDAO)
 - [GSYVideoPlayer](https://github.com/androidok/GSYVideoPlayer)
 
 ## 效果图
-
-![img](http://wx4.sinaimg.cn/mw690/6ab241dbgy1ffofv2gbvij20w01hc148.jpg)
-
-![img](http://wx3.sinaimg.cn/mw690/6ab241dbgy1ffofv23p4qj20w01hcgyl.jpg)
-
-![img](http://wx4.sinaimg.cn/mw690/6ab241dbgy1ffofv0td6hj20w01hcdsy.jpg)
-
-![img](http://wx2.sinaimg.cn/mw690/6ab241dbgy1ffofv25bspj20w01hcth8.jpg)
+<center class="half">
+    <img src="http://wx4.sinaimg.cn/mw690/6ab241dbgy1ffofv2gbvij20w01hc148.jpg" width="300"/>
+    <img src="http://wx4.sinaimg.cn/mw690/6ab241dbgy1ffofv23p4qj20w01hcgyl.jpg" width="300"/>
+    <img src="http://wx4.sinaimg.cn/mw690/6ab241dbgy1ffofv0td6hj20w01hcdsy.jpg" width="300"/>
+    <img src="http://wx4.sinaimg.cn/mw690/6ab241dbgy1ffofv25bspj20w01hcth8.jpg" width="300"/>
+</center>
 
 ## 声明
 
